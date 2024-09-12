@@ -1,9 +1,7 @@
 #include <dirent.h>
 #include <stdio.h>
-// with git
-// github
-int main(void){
-  DIR *directory;
+int main(int argc, char *argv[]){
+ /* DIR *directory;
   struct dirent *entry;
   directory = opendir(".");
   if(directory == NULL){
@@ -22,4 +20,24 @@ int main(void){
     return 1;
   }
   return 0;
+  */
+  if(argc != 2){
+    print("Usage: file-rename <directory>\n");
+    return 1;
+  }
+  
+  DIR *dir;
+  struct dirent *entry;
+  directory = opendir(argv[1]);
+  // check for config file
+  if(access("config.txt", F_OK) != 0){
+    printf("config file not found, run setup first\n");
+    return 2;
+  }
+
+  int fd = open("config.txt", O_RDONLY);
+  char buffer[100];
+  for(int i = 0; i < 3; i++){
+    fgets(buffer, 100, fd)
+  }
 }
