@@ -1,5 +1,22 @@
 #include <dirent.h>
+#include <errno.h>
+#include <fcntl.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+
+char *readline(int fd){
+  char *buf = (char*)malloc(100);
+  int i = 0;
+  while(buf[i - 1] != '\n'){
+    read(fd, &buf[i], 1);
+    i++;
+  }
+  buf[i - 1] = '\0';
+  return buf;
+}
+
 int main(int argc, char *argv[]){
  /* DIR *directory;
   struct dirent *entry;
@@ -22,13 +39,13 @@ int main(int argc, char *argv[]){
   return 0;
   */
   if(argc != 2){
-    print("Usage: file-rename <directory>\n");
+    printf("Usage: file-rename <directory>\n");
     return 1;
   }
   
   DIR *dir;
   struct dirent *entry;
-  directory = opendir(argv[1]);
+  dir = opendir(argv[1]);
   // check for config file
   if(access("config.txt", F_OK) != 0){
     printf("config file not found, run setup first\n");
@@ -36,8 +53,12 @@ int main(int argc, char *argv[]){
   }
 
   int fd = open("config.txt", O_RDONLY);
-  char buffer[100];
+  char *buffer;
   for(int i = 0; i < 3; i++){
-    fgets(buffer, 100, fd)
+    buffer = readline(fd); 
+    printf("%s", buffer);
   }
+  closedir(dir);
+  close(fd);
+  free(buffer);
 }
