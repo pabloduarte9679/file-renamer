@@ -62,9 +62,7 @@ int main(int argc, char *argv[]){
   num_string = readline(fd);
   num = atoi(num_string);
 
-  printf("%s\n", pattern);
-  printf("%s\n", string);
-  printf("%d\n", num);
+  
 
   free(num_string);
   closedir(dir);
