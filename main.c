@@ -53,12 +53,22 @@ int main(int argc, char *argv[]){
   }
 
   int fd = open("config.txt", O_RDONLY);
-  char *buffer;
-  for(int i = 0; i < 3; i++){
-    buffer = readline(fd); 
-    printf("%s", buffer);
-  }
+  char *pattern;
+  char *string;
+  char *num_string;
+  int num;
+  pattern = readline(fd);
+  string = readline(fd);
+  num_string = readline(fd);
+  num = atoi(num_string);
+
+  printf("%s\n", pattern);
+  printf("%s\n", string);
+  printf("%d\n", num);
+
+  free(num_string);
   closedir(dir);
   close(fd);
-  free(buffer);
+  free(pattern);
+  free(string);
 }
