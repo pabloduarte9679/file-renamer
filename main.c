@@ -8,6 +8,10 @@
 
 char *readline(int fd){
   char *buf = (char*)malloc(100);
+  if(buf == NULL){
+    printf("Error allocating memory for buffer!\n");
+    return NULL;
+  }
   int i = 0;
   while(buf[i - 1] != '\n'){
     read(fd, &buf[i], 1);
@@ -46,6 +50,10 @@ int main(int argc, char *argv[]){
   DIR *dir;
   struct dirent *entry;
   dir = opendir(argv[1]);
+  if(dir == NULL){
+    printf("Error opening directory!\n");
+    return 3;
+  }
   // check for config file
   if(access("config.txt", F_OK) != 0){
     printf("config file not found, run setup first\n");
@@ -53,6 +61,10 @@ int main(int argc, char *argv[]){
   }
 
   int fd = open("config.txt", O_RDONLY);
+  if(fd == -1){
+    printf("Error opening config file!\n");
+    return 4;
+  }
   char *pattern;
   char *string;
   char *num_string;
