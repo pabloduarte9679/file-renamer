@@ -53,17 +53,21 @@ int main(int argc, char *argv[]){
   string = readline(fd);
   num_string = readline(fd);
   num = atoi(num_string);
-
+  char new_filename[100];
+  int found = 0;
   // read files in directory to change filenames
   while((entry = readdir(dir)) != NULL){
     if(entry->d_type == DT_REG){
       if(strstr(entry->d_name, pattern) != NULL){
-        printf("Found\n"); 
-      }else{
-        printf("Filename not found!\n");
-	//exit(5);
-      }     
+        found = 1;
+        sprintf(new_filename, "%s%d", string, num++);
+	rename(entry->d_name, new_filename);
+      }
     }
+  }
+  if(found == 0){
+    printf("Filename not found!\n");
+    exit(5);
   }
 
   free(num_string);
