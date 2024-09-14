@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/stat.h>
 #include <unistd.h>
 
 char *readline(int fd){
@@ -26,7 +27,7 @@ int main(int argc, char *argv[]){
     printf("Usage: file-rename <directory>\n");
     return 1;
   }
-  
+  char filename[] = {"config.txt"};
   DIR *dir;
   struct dirent *entry;
   dir = opendir(argv[1]);
@@ -40,7 +41,7 @@ int main(int argc, char *argv[]){
     return 2;
   }
 
-  int fd = open("config.txt", O_RDONLY);
+  int fd = open("config.txt", O_RDWR);
   if(fd == -1){
     printf("Error opening config file!\n");
     return 4;
@@ -53,9 +54,11 @@ int main(int argc, char *argv[]){
   string = readline(fd);
   num_string = readline(fd);
   num = atoi(num_string);
+  int old_num = num;
   char new_filename[100];
   int found = 0;
   // read files in directory to change filenames
+
   while((entry = readdir(dir)) != NULL){
     if(entry->d_type == DT_REG){
       if(strstr(entry->d_name, pattern) != NULL){
@@ -69,6 +72,24 @@ int main(int argc, char *argv[]){
     printf("Filename not found!\n");
     exit(5);
   }
+  // update num in config file
+  struct stat st;
+  stat("config.txt", &st);
+  char file_buffer[st.st_size + 1];
+  lseek(fd, 0, SEEK_SET);
+  if(read(fd, file_buffer, st.st_size) != st.st_size){
+    printf("Error reading config file!\n");
+    exit(6);
+  }
+  
+  int newline_count = 0;
+  off_t offset = 0;
+  while(newline_count != 2){
+    if(file_buffer[offset++] == '\n'){
+      newline_count++;
+    }
+  }
+  
 
   free(num_string);
   closedir(dir);
