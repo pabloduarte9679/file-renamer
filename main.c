@@ -22,26 +22,6 @@ char *readline(int fd){
 }
 
 int main(int argc, char *argv[]){
- /* DIR *directory;
-  struct dirent *entry;
-  directory = opendir(".");
-  if(directory == NULL){
-    printf("Error opening directory\n");
-    return 1;
-  }
-  while((entry = readdir(directory)) != NULL){
-    if(entry->d_type == DT_REG){
-      printf("File: %s\n", entry->d_name);
-    }else if(entry->d_type == DT_DIR){
-      printf("Dir: %s\n", entry->d_name);
-    }
-  }
-  if(closedir(directory) == -1){
-    printf("Error closing directory\n");
-    return 1;
-  }
-  return 0;
-  */
   if(argc != 2){
     printf("Usage: file-rename <directory>\n");
     return 1;
@@ -74,7 +54,17 @@ int main(int argc, char *argv[]){
   num_string = readline(fd);
   num = atoi(num_string);
 
-  
+  // read files in directory to change filenames
+  while((entry = readdir(dir)) != NULL){
+    if(entry->d_type == DT_REG){
+      if(strstr(entry->d_name, pattern) != NULL){
+        printf("Found\n"); 
+      }else{
+        printf("Filename not found!\n");
+	//exit(5);
+      }     
+    }
+  }
 
   free(num_string);
   closedir(dir);
