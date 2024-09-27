@@ -29,7 +29,7 @@ int main(int argc, char *argv[]){
   }
   char filename[] = {"config.txt"};
   DIR *dir;
-  struct dirent *entry;
+  struct dirent **entry;
   dir = opendir(argv[1]);
   if(dir == NULL){
     printf("Error opening directory!\n");
@@ -55,19 +55,30 @@ int main(int argc, char *argv[]){
   num_string = readline(fd);
   num = atoi(num_string);
   int old_num = num;
-  char new_filename[100];
+  char new_filename[200];
   int found = 0;
   // read files in directory to change filenames
+  char *filelist[100];
+  int file_n;
+  int tmp = 0;
 
-  while((entry = readdir(dir)) != NULL){
-    if(entry->d_type == DT_REG){
-      if(strstr(entry->d_name, pattern) != NULL){
-        found = 1;
-        sprintf(new_filename, "%s%d", string, num++);
-	rename(entry->d_name, new_filename);
-      }
-    }
+  file_n = scandir(argv[1], &entry, NULL, alphasort);
+  if(file_n == -1){
+    perror("scandir");
+    exit(EXIT_FAILURE);
   }
+  while(tmp < file_n){
+    if(entry[tmp]->d_type == DT_REG && strstr(entry[tmp]->d_name, pattern) != NULL){
+      found = 1;
+      sprintf(new_filename, string, num++, entry[tmp]->d_name);
+      rename(entry[tmp]->d_name, new_filename);
+    }
+    free(entry[tmp++]);
+  }
+
+  // rename files
+
+
   if(found == 0){
     printf("Filename not found!\n");
     exit(5);
