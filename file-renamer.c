@@ -69,6 +69,10 @@ int main(int argc, char *argv[]){
   }
   while(tmp < file_n){
     if(entry[tmp]->d_type == DT_REG && strstr(entry[tmp]->d_name, pattern) != NULL){
+      if(strstr(entry[tmp]->d_name, "poscad") != NULL){
+        tmp++;
+        continue;
+      }
       found = 1;
       sprintf(new_filename, string, num++, entry[tmp]->d_name);
       rename(entry[tmp]->d_name, new_filename);
